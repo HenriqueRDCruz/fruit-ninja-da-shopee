@@ -10,12 +10,24 @@
 
 <body>
     <div class="container">
-        <h1>Jogo de Formas Geométricas</h1>
+        <header>
+            <h1>Formas Geométricas</h1>
+            <button id="rules-button">Regras</button>
+        </header>
 
         <div class="game-info">
-            <div>Pontuação: <span id="score">0</span></div>
-            <div>Vidas: <span id="lives">3</span></div>
-            <div>Velocidade: <span id="speed">1</span></div>
+            <div class="info-item">
+                <div>Pontuação</div>
+                <div class="info-value" id="score">0</div>
+            </div>
+            <div class="info-item">
+                <div>Vidas</div>
+                <div class="info-value" id="lives">3</div>
+            </div>
+            <div class="info-item">
+                <div>Velocidade</div>
+                <div class="info-value" id="speed">1x</div>
+            </div>
         </div>
 
         <div id="game-container">
@@ -28,14 +40,58 @@
 
         <div class="controls">
             <button id="start-button">Iniciar Jogo</button>
+            <button id="pause-button" disabled>Pausar</button>
         </div>
 
-        <div class="instructions">
-            <h3>Como Jogar:</h3>
-            <p>• Clique nas formas geométricas para ganhar pontos</p>
-            <p>• Cada forma que chegar ao chão reduz uma vida</p>
-            <p>• Você tem 3 vidas</p>
-            <p>• Quanto mais pontos, mais rápido as formas caem!</p>
+    </div>
+
+    <div class="rules-modal" id="rules-modal">
+        <div class="rules-content">
+            <h2>Regras do Jogo</h2>
+
+            <div class="rules-list">
+                <div class="rule-item">
+                    <div class="rule-icon">●</div>
+                    <div class="rule-text">Clique nas formas geométricas para ganhar pontos</div>
+                </div>
+
+                <div class="rule-item">
+                    <div class="rule-icon">●</div>
+                    <div class="rule-text">Cada forma que chegar ao chão reduz uma vida</div>
+                </div>
+
+                <div class="rule-item">
+                    <div class="rule-icon">●</div>
+                    <div class="rule-text">Você começa com 3 vidas</div>
+                </div>
+
+                <div class="rule-item">
+                    <div class="rule-icon">●</div>
+                    <div class="rule-text">O jogo termina quando suas vidas acabarem</div>
+                </div>
+
+                <div class="rule-item">
+                    <div class="rule-icon">●</div>
+                    <div class="rule-text">Quanto mais pontos você fizer, mais rápido as formas cairão</div>
+                </div>
+            </div>
+
+            <div class="shape-preview">
+                <div class="preview-item">
+                    <div class="preview-shape circle" style="background-color: #FF5252;">10</div>
+                    <div>Círculo</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-shape" style="background-color: #448AFF;">10</div>
+                    <div>Quadrado</div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-shape triangle" style="background-color: #69F0AE;">10</div>
+                    <div>Triângulo</div>
+                </div>
+            </div>
+
+            <button id="close-rules">Entendi</button>
         </div>
     </div>
 

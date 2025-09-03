@@ -1,3 +1,9 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
@@ -8,6 +14,7 @@ body {
     align-items: center;
     min-height: 100vh;
     color: white;
+    overflow-x: hidden;
 }
 
 .container {
@@ -16,14 +23,24 @@ body {
     padding: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     text-align: center;
-    max-width: 600px;
+    max-width: 800px;
     width: 90%;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #fdbb2d;
 }
 
 h1 {
     margin-top: 0;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     color: #fdbb2d;
+    font-size: 2.2rem;
 }
 
 .game-info {
@@ -32,8 +49,20 @@ h1 {
     margin-bottom: 20px;
     font-size: 1.2rem;
     background-color: rgba(255, 255, 255, 0.1);
-    padding: 10px;
+    padding: 15px;
     border-radius: 10px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.info-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #fdbb2d;
 }
 
 #game-container {
@@ -51,6 +80,11 @@ h1 {
     position: absolute;
     cursor: pointer;
     transition: transform 0.1s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.7);
 }
 
 .shape:hover {
@@ -62,15 +96,14 @@ h1 {
 }
 
 .triangle {
-    width: 0;
-    height: 0;
-    background-color: transparent !important;
-    border-left: 25px solid transparent;
-    border-right: 25px solid transparent;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
 }
 
 .controls {
     margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
 }
 
 button {
@@ -110,11 +143,101 @@ button:active {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.9);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 100;
     display: none;
+}
+
+.rules-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.rules-content {
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 3px solid #fdbb2d;
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+}
+
+.rules-list {
+    text-align: left;
+    margin: 20px 0;
+}
+
+.rule-item {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: flex-start;
+}
+
+.rule-icon {
+    font-size: 24px;
+    margin-right: 15px;
+    min-width: 30px;
+    color: #fdbb2d;
+}
+
+.rule-text {
+    flex: 1;
+    text-align: left;
+    font-size: 1.1rem;
+}
+
+.heart {
+    color: #ff5252;
+    margin: 0 2px;
+}
+
+.shape-preview {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 15px 0;
+}
+
+.preview-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.preview-shape {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .game-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .controls {
+        flex-direction: column;
+    }
 }

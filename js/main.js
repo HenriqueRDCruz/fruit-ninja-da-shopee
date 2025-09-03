@@ -5,9 +5,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const livesElement = document.getElementById('lives');
     const speedElement = document.getElementById('speed');
     const startButton = document.getElementById('start-button');
+    const pauseButton = document.getElementById('pause-button');
     const gameOverScreen = document.getElementById('game-over');
     const finalScoreElement = document.getElementById('final-score');
     const restartButton = document.getElementById('restart-button');
+    const rulesButton = document.getElementById('rules-button');
+    const rulesModal = document.getElementById('rules-modal');
+    const closeRulesButton = document.getElementById('close-rules');
 
     // Variáveis do jogo
     let score = 0;
@@ -16,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let gameInterval;
     let shapeInterval;
     let isGameRunning = false;
+    let isPaused = false;
     let shapes = [];
 
     // Cores para as formas
@@ -24,6 +29,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Iniciar o jogo
     startButton.addEventListener('click', startGame);
     restartButton.addEventListener('click', startGame);
+    pauseButton.addEventListener('click', togglePause);
+    rulesButton.addEventListener('click', showRules);
+    closeRulesButton.addEventListener('click', hideRules);
 
     function startGame() {
         // Reiniciar variáveis
@@ -31,12 +39,15 @@ document.addEventListener('DOMContentLoaded', function () {
         lives = 3;
         speed = 1;
         shapes = [];
+        isPaused = false;
 
         // Atualizar UI
         scoreElement.textContent = score;
         livesElement.textContent = lives;
-        speedElement.textContent = speed;
+        speedElement.textContent = speed + 'x';
         gameOverScreen.style.display = 'none';
+        pauseButton.textContent = 'Pausar';
+        pauseButton.disabled = false;
 
         // Limpar o container do jogo
         gameContainer.innerHTML = '';
@@ -47,14 +58,16 @@ document.addEventListener('DOMContentLoaded', function () {
         startButton.disabled = true;
 
         // Gerar formas em intervalos
+        clearInterval(shapeInterval);
         shapeInterval = setInterval(createShape, 1000);
 
         // Loop principal do jogo
+        clearInterval(gameInterval);
         gameInterval = setInterval(updateGame, 16);
     }
 
     function createShape() {
-        if (!isGameRunning) return;
+        if (!isGameRunning || isPaused) return;
 
         // Criar uma nova forma
         const shape = document.createElement('div');
@@ -76,9 +89,10 @@ document.addEventListener('DOMContentLoaded', function () {
             shape.classList.add('circle');
         } else if (randomType === 'triangle') {
             shape.classList.add('triangle');
-            shape.style.borderBottom = size + 'px solid ' + color;
-            shape.style.backgroundColor = 'transparent';
         }
+
+        // Adicionar valor de pontos
+        shape.innerHTML = '10';
 
         // Posição horizontal aleatória
         const maxLeft = gameContainer.offsetWidth - size;
@@ -90,10 +104,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Adicionar evento de clique
         shape.addEventListener('click', () => {
-            if (!isGameRunning) return;
+            if (!isGameRunning || isPaused) return;
 
-            // Remover forma
-            shape.remove();
+            // Efeito visual ao clicar
+            shape.style.transform = 'scale(1.2)';
+            shape.style.opacity = '0.5';
+
+            // Remover forma após breve delay
+            setTimeout(() => {
+                shape.remove();
+            }, 200);
 
             // Aumentar pontuação
             score += 10;
@@ -102,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Aumentar velocidade a cada 50 pontos
             if (score % 50 === 0) {
                 speed += 0.2;
-                speedElement.textContent = speed.toFixed(1);
+                speedElement.textContent = speed.toFixed(1) + 'x';
             }
         });
 
@@ -115,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updateGame() {
-        if (!isGameRunning) return;
+        if (!isGameRunning || isPaused) return;
 
         // Mover todas as formas
         for (let i = 0; i < shapes.length; i++) {
@@ -154,6 +174,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function togglePause() {
+        isPaused = !isPaused;
+        pauseButton.textContent = isPaused ? 'Continuar' : 'Pausar';
+    }
+
     function endGame() {
         isGameRunning = false;
         clearInterval(gameInterval);
@@ -163,5 +188,17 @@ document.addEventListener('DOMContentLoaded', function () {
         finalScoreElement.textContent = score;
         gameOverScreen.style.display = 'flex';
         startButton.disabled = false;
+        pauseButton.disabled = true;
     }
+
+    function showRules() {
+        rulesModal.style.display = 'flex';
+    }
+
+    function hideRules() {
+        rulesModal.style.display = 'none';
+    }
+
+    // Mostrar regras no início
+    showRules();
 });
