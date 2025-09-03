@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Formas Geométricas</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Jogo de Formas Geométricas</h1>
+
+        <div class="game-info">
+            <div>Pontuação: <span id="score">0</span></div>
+            <div>Vidas: <span id="lives">3</span></div>
+            <div>Velocidade: <span id="speed">1</span></div>
+        </div>
+
+        <div id="game-container">
+            <div class="game-over" id="game-over">
+                <h2>Fim de Jogo!</h2>
+                <p>Sua pontuação final: <span id="final-score">0</span></p>
+                <button id="restart-button">Jogar Novamente</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="start-button">Iniciar Jogo</button>
+        </div>
+
+        <div class="instructions">
+            <h3>Como Jogar:</h3>
+            <p>• Clique nas formas geométricas para ganhar pontos</p>
+            <p>• Cada forma que chegar ao chão reduz uma vida</p>
+            <p>• Você tem 3 vidas</p>
+            <p>• Quanto mais pontos, mais rápido as formas caem!</p>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>
