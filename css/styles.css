@@ -167,6 +167,12 @@ body {
     transform: translate(-50%, -50%);
     text-align: center;
     z-index: 10;
+    background: rgba(0, 0, 0, 0.85);
+    padding: 30px;
+    border-radius: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    width: 90%;
+    max-width: 500px;
 }
 
 .menu-title {
@@ -224,6 +230,25 @@ canvas {
     height: 100%;
 }
 
+.difficulty-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-easy {
+    background: #10b981;
+}
+
+.btn-normal {
+    background: #3b82f6;
+}
+
+.btn-hard {
+    background: #ef4444;
+}
+
 /* Layout responsivo */
 @media (max-width: 1100px) {
     .content-wrapper {
@@ -256,5 +281,10 @@ canvas {
         flex-direction: column;
         align-items: center;
         gap: 10px;
+    }
+
+    .difficulty-buttons {
+        flex-direction: column;
+        align-items: center;
     }
 }

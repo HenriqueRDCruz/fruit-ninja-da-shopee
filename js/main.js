@@ -2,25 +2,46 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const scoreElement = document.getElementById('score');
 const livesElement = document.getElementById('lives');
+const speedElement = document.getElementById('speed');
 const menuScreen = document.getElementById('menuScreen');
 const gameOverScreen = document.getElementById('gameOverScreen');
 const finalScoreElement = document.getElementById('finalScore');
 
 let gameState = 'menu'; // 'menu', 'playing', 'gameOver'
 let score = 0;
-let lives = 3;
+let lives = 5; // Aumentado para 5 vidas
 let shapes = [];
 let particles = [];
-let gameSpeed = 0.1;
-let spawnRate = 1;
+let gameSpeed = 1;
+let spawnRate = 0.02;
 let animationId;
+let difficulty = 'easy'; // Padrão: modo fácil
 
 class Shape {
     constructor() {
         this.x = Math.random() * (canvas.width - 60) + 30;
         this.y = -30;
-        this.size = Math.random() * 20 + 25;
-        this.speed = (Math.random() * 2 + 1) * gameSpeed;
+
+        // No modo fácil, formas são maiores
+        if (difficulty === 'easy') {
+            this.size = Math.random() * 15 + 30; // 30-45
+        } else if (difficulty === 'normal') {
+            this.size = Math.random() * 20 + 25; // 25-45
+        } else {
+            this.size = Math.random() * 20 + 20; // 20-40
+        }
+
+        // Velocidade baseada na dificuldade
+        let baseSpeed;
+        if (difficulty === 'easy') {
+            baseSpeed = Math.random() * 1.5 + 0.5; // 0.5-2.0
+        } else if (difficulty === 'normal') {
+            baseSpeed = Math.random() * 2 + 1; // 1-3
+        } else {
+            baseSpeed = Math.random() * 3 + 1.5; // 1.5-4.5
+        }
+
+        this.speed = baseSpeed * gameSpeed;
         this.type = ['circle', 'square', 'triangle'][Math.floor(Math.random() * 3)];
         this.color = this.getColor();
         this.points = this.getPoints();
@@ -73,8 +94,20 @@ class Shape {
     }
 
     isClicked(mouseX, mouseY) {
-        const distance = Math.sqrt((mouseX - this.x) ** 2 + (mouseY - this.y) ** 2);
-        return distance < this.size;
+        if (this.type === 'circle') {
+            const distance = Math.sqrt((mouseX - this.x) ** 2 + (mouseY - this.y) ** 2);
+            return distance < this.size;
+        } else if (this.type === 'square') {
+            return mouseX > this.x - this.size &&
+                mouseX < this.x + this.size &&
+                mouseY > this.y - this.size &&
+                mouseY < this.y + this.size;
+        } else if (this.type === 'triangle') {
+            // Simplificação da detecção de clique para triângulo
+            const distance = Math.sqrt((mouseX - this.x) ** 2 + (mouseY - this.y) ** 2);
+            return distance < this.size * 1.2;
+        }
+        return false;
     }
 }
 
@@ -108,14 +141,32 @@ class Particle {
     }
 }
 
-function startGame() {
+function startGame(selectedDifficulty) {
+    difficulty = selectedDifficulty || 'easy';
     gameState = 'playing';
     score = 0;
-    lives = 3;
+
+    // Mais vidas no modo fácil
+    if (difficulty === 'easy') {
+        lives = 5;
+    } else if (difficulty === 'normal') {
+        lives = 4;
+    } else {
+        lives = 3;
+    }
+
     shapes = [];
     particles = [];
     gameSpeed = 1;
-    spawnRate = 0.02;
+
+    // Taxa de spawn mais baixa no modo fácil
+    if (difficulty === 'easy') {
+        spawnRate = 0.015;
+    } else if (difficulty === 'normal') {
+        spawnRate = 0.02;
+    } else {
+        spawnRate = 0.025;
+    }
 
     menuScreen.style.display = 'none';
     gameOverScreen.style.display = 'none';
@@ -125,7 +176,7 @@ function startGame() {
 }
 
 function restartGame() {
-    startGame();
+    startGame(difficulty);
 }
 
 function goToMenu() {
@@ -145,6 +196,7 @@ function gameOver() {
 function updateUI() {
     scoreElement.textContent = score;
     livesElement.textContent = lives;
+    speedElement.textContent = gameSpeed.toFixed(1) + 'x';
 }
 
 function createExplosion(x, y, color) {
@@ -194,9 +246,17 @@ function gameLoop() {
         }
     }
 
-    // Aumentar dificuldade
-    gameSpeed = 1 + score * 0.01;
-    spawnRate = Math.min(0.05, 0.02 + score * 0.0001);
+    // Aumentar dificuldade mais lentamente no modo fácil
+    if (difficulty === 'easy') {
+        gameSpeed = 1 + score * 0.005; // Aumento mais lento
+        spawnRate = Math.min(0.03, 0.015 + score * 0.00005); // Aumento mais lento
+    } else if (difficulty === 'normal') {
+        gameSpeed = 1 + score * 0.01;
+        spawnRate = Math.min(0.04, 0.02 + score * 0.0001);
+    } else {
+        gameSpeed = 1 + score * 0.015; // Aumento mais rápido
+        spawnRate = Math.min(0.05, 0.025 + score * 0.00015); // Aumento mais rápido
+    }
 
     animationId = requestAnimationFrame(gameLoop);
 }
