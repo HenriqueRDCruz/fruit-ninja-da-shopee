@@ -1,204 +1,225 @@
-document.addEventListener('DOMContentLoaded', function () {
-    // Elementos do DOM
-    const gameContainer = document.getElementById('game-container');
-    const scoreElement = document.getElementById('score');
-    const livesElement = document.getElementById('lives');
-    const speedElement = document.getElementById('speed');
-    const startButton = document.getElementById('start-button');
-    const pauseButton = document.getElementById('pause-button');
-    const gameOverScreen = document.getElementById('game-over');
-    const finalScoreElement = document.getElementById('final-score');
-    const restartButton = document.getElementById('restart-button');
-    const rulesButton = document.getElementById('rules-button');
-    const rulesModal = document.getElementById('rules-modal');
-    const closeRulesButton = document.getElementById('close-rules');
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const scoreElement = document.getElementById('score');
+const livesElement = document.getElementById('lives');
+const menuScreen = document.getElementById('menuScreen');
+const gameOverScreen = document.getElementById('gameOverScreen');
+const finalScoreElement = document.getElementById('finalScore');
 
-    // Variáveis do jogo
-    let score = 0;
-    let lives = 3;
-    let speed = 1;
-    let gameInterval;
-    let shapeInterval;
-    let isGameRunning = false;
-    let isPaused = false;
-    let shapes = [];
+let gameState = 'menu'; // 'menu', 'playing', 'gameOver'
+let score = 0;
+let lives = 3;
+let shapes = [];
+let particles = [];
+let gameSpeed = 0.1;
+let spawnRate = 1;
+let animationId;
 
-    // Cores para as formas
-    const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', '#69F0AE'];
-
-    // Iniciar o jogo
-    startButton.addEventListener('click', startGame);
-    restartButton.addEventListener('click', startGame);
-    pauseButton.addEventListener('click', togglePause);
-    rulesButton.addEventListener('click', showRules);
-    closeRulesButton.addEventListener('click', hideRules);
-
-    function startGame() {
-        // Reiniciar variáveis
-        score = 0;
-        lives = 3;
-        speed = 1;
-        shapes = [];
-        isPaused = false;
-
-        // Atualizar UI
-        scoreElement.textContent = score;
-        livesElement.textContent = lives;
-        speedElement.textContent = speed + 'x';
-        gameOverScreen.style.display = 'none';
-        pauseButton.textContent = 'Pausar';
-        pauseButton.disabled = false;
-
-        // Limpar o container do jogo
-        gameContainer.innerHTML = '';
-        gameContainer.appendChild(gameOverScreen);
-
-        // Iniciar loops do jogo
-        isGameRunning = true;
-        startButton.disabled = true;
-
-        // Gerar formas em intervalos
-        clearInterval(shapeInterval);
-        shapeInterval = setInterval(createShape, 1000);
-
-        // Loop principal do jogo
-        clearInterval(gameInterval);
-        gameInterval = setInterval(updateGame, 16);
+class Shape {
+    constructor() {
+        this.x = Math.random() * (canvas.width - 60) + 30;
+        this.y = -30;
+        this.size = Math.random() * 20 + 25;
+        this.speed = (Math.random() * 2 + 1) * gameSpeed;
+        this.type = ['circle', 'square', 'triangle'][Math.floor(Math.random() * 3)];
+        this.color = this.getColor();
+        this.points = this.getPoints();
     }
 
-    function createShape() {
-        if (!isGameRunning || isPaused) return;
+    getColor() {
+        const colors = {
+            circle: '#3b82f6',
+            square: '#10b981',
+            triangle: '#f59e0b'
+        };
+        return colors[this.type];
+    }
 
-        // Criar uma nova forma
-        const shape = document.createElement('div');
-        shape.className = 'shape';
+    getPoints() {
+        const points = {
+            circle: 10,
+            square: 15,
+            triangle: 20
+        };
+        return points[this.type];
+    }
 
-        // Tipos de formas: quadrado, círculo, triângulo
-        const shapeTypes = ['square', 'circle', 'triangle'];
-        const randomType = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+    update() {
+        this.y += this.speed;
+    }
 
-        // Definir estilo baseado no tipo
-        const size = 40 + Math.random() * 30;
-        const color = colors[Math.floor(Math.random() * colors.length)];
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
 
-        shape.style.width = size + 'px';
-        shape.style.height = size + 'px';
-        shape.style.backgroundColor = color;
-
-        if (randomType === 'circle') {
-            shape.classList.add('circle');
-        } else if (randomType === 'triangle') {
-            shape.classList.add('triangle');
+        if (this.type === 'circle') {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+        } else if (this.type === 'square') {
+            ctx.fillRect(this.x - this.size, this.y - this.size, this.size * 2, this.size * 2);
+            ctx.strokeRect(this.x - this.size, this.y - this.size, this.size * 2, this.size * 2);
+        } else if (this.type === 'triangle') {
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y - this.size);
+            ctx.lineTo(this.x - this.size, this.y + this.size);
+            ctx.lineTo(this.x + this.size, this.y + this.size);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
         }
-
-        // Adicionar valor de pontos
-        shape.innerHTML = '10';
-
-        // Posição horizontal aleatória
-        const maxLeft = gameContainer.offsetWidth - size;
-        shape.style.left = Math.random() * maxLeft + 'px';
-        shape.style.top = '0px';
-
-        // Adicionar ao container
-        gameContainer.appendChild(shape);
-
-        // Adicionar evento de clique
-        shape.addEventListener('click', () => {
-            if (!isGameRunning || isPaused) return;
-
-            // Efeito visual ao clicar
-            shape.style.transform = 'scale(1.2)';
-            shape.style.opacity = '0.5';
-
-            // Remover forma após breve delay
-            setTimeout(() => {
-                shape.remove();
-            }, 200);
-
-            // Aumentar pontuação
-            score += 10;
-            scoreElement.textContent = score;
-
-            // Aumentar velocidade a cada 50 pontos
-            if (score % 50 === 0) {
-                speed += 0.2;
-                speedElement.textContent = speed.toFixed(1) + 'x';
-            }
-        });
-
-        // Guardar referência da forma
-        shapes.push({
-            element: shape,
-            speed: 1 + Math.random() * 2,
-            isClicked: false
-        });
     }
 
-    function updateGame() {
-        if (!isGameRunning || isPaused) return;
+    isClicked(mouseX, mouseY) {
+        const distance = Math.sqrt((mouseX - this.x) ** 2 + (mouseY - this.y) ** 2);
+        return distance < this.size;
+    }
+}
 
-        // Mover todas as formas
-        for (let i = 0; i < shapes.length; i++) {
-            const shape = shapes[i];
+class Particle {
+    constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 10;
+        this.vy = (Math.random() - 0.5) * 10;
+        this.life = 30;
+        this.maxLife = 30;
+        this.color = color;
+        this.size = Math.random() * 4 + 2;
+    }
 
-            // Se a forma foi clicada, pular
-            if (shape.isClicked) continue;
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.2;
+        this.life--;
+    }
 
-            // Obter posição atual
-            const currentTop = parseFloat(shape.element.style.top || 0);
+    draw() {
+        const alpha = this.life / this.maxLife;
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+    }
+}
 
-            // Atualizar posição
-            const newTop = currentTop + shape.speed * speed;
-            shape.element.style.top = newTop + 'px';
+function startGame() {
+    gameState = 'playing';
+    score = 0;
+    lives = 3;
+    shapes = [];
+    particles = [];
+    gameSpeed = 1;
+    spawnRate = 0.02;
 
-            // Verificar se chegou ao fundo
-            if (newTop > gameContainer.offsetHeight) {
-                // Remover forma
-                shape.element.remove();
-                shapes[i].isClicked = true;
+    menuScreen.style.display = 'none';
+    gameOverScreen.style.display = 'none';
 
-                // Reduzir vida
-                lives--;
-                livesElement.textContent = lives;
+    updateUI();
+    gameLoop();
+}
 
-                // Verificar fim de jogo
-                if (lives <= 0) {
-                    endGame();
-                }
+function restartGame() {
+    startGame();
+}
+
+function goToMenu() {
+    gameState = 'menu';
+    cancelAnimationFrame(animationId);
+    menuScreen.style.display = 'block';
+    gameOverScreen.style.display = 'none';
+}
+
+function gameOver() {
+    gameState = 'gameOver';
+    cancelAnimationFrame(animationId);
+    finalScoreElement.textContent = score;
+    gameOverScreen.style.display = 'block';
+}
+
+function updateUI() {
+    scoreElement.textContent = score;
+    livesElement.textContent = lives;
+}
+
+function createExplosion(x, y, color) {
+    for (let i = 0; i < 8; i++) {
+        particles.push(new Particle(x, y, color));
+    }
+}
+
+function gameLoop() {
+    if (gameState !== 'playing') return;
+
+    // Limpar canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Spawnar novas formas
+    if (Math.random() < spawnRate) {
+        shapes.push(new Shape());
+    }
+
+    // Atualizar formas
+    for (let i = shapes.length - 1; i >= 0; i--) {
+        const shape = shapes[i];
+        shape.update();
+        shape.draw();
+
+        // Verificar se a forma tocou o chão
+        if (shape.y > canvas.height + shape.size) {
+            shapes.splice(i, 1);
+            lives--;
+            updateUI();
+
+            if (lives <= 0) {
+                gameOver();
+                return;
             }
         }
-
-        // Limpar formas que já foram removidas
-        shapes = shapes.filter(shape => {
-            return !shape.isClicked && document.contains(shape.element);
-        });
     }
 
-    function togglePause() {
-        isPaused = !isPaused;
-        pauseButton.textContent = isPaused ? 'Continuar' : 'Pausar';
+    // Atualizar partículas
+    for (let i = particles.length - 1; i >= 0; i--) {
+        const particle = particles[i];
+        particle.update();
+        particle.draw();
+
+        if (particle.life <= 0) {
+            particles.splice(i, 1);
+        }
     }
 
-    function endGame() {
-        isGameRunning = false;
-        clearInterval(gameInterval);
-        clearInterval(shapeInterval);
+    // Aumentar dificuldade
+    gameSpeed = 1 + score * 0.01;
+    spawnRate = Math.min(0.05, 0.02 + score * 0.0001);
 
-        // Mostrar tela de fim de jogo
-        finalScoreElement.textContent = score;
-        gameOverScreen.style.display = 'flex';
-        startButton.disabled = false;
-        pauseButton.disabled = true;
+    animationId = requestAnimationFrame(gameLoop);
+}
+
+// Event listeners
+canvas.addEventListener('click', (e) => {
+    if (gameState !== 'playing') return;
+
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+    for (let i = shapes.length - 1; i >= 0; i--) {
+        const shape = shapes[i];
+        if (shape.isClicked(mouseX, mouseY)) {
+            score += shape.points;
+            updateUI();
+            createExplosion(shape.x, shape.y, shape.color);
+            shapes.splice(i, 1);
+            break;
+        }
     }
-
-    function showRules() {
-        rulesModal.style.display = 'flex';
-    }
-
-    function hideRules() {
-        rulesModal.style.display = 'none';
-    }
-
-    // Mostrar regras no início
-    showRules();
 });
+
+// Inicializar
+updateUI();

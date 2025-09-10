@@ -1,97 +1,75 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo de Formas Geométricas</title>
+    <title>Geometric Ninja</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>Formas Geométricas</h1>
-            <button id="rules-button">Regras</button>
-        </header>
+    <div class="game-container">
+        <div class="header">
+            <h1 class="title">Geometric Ninja</h1>
+            <p class="subtitle">Clique nas formas antes que toquem o chão!</p>
 
-        <div class="game-info">
-            <div class="info-item">
-                <div>Pontuação</div>
-                <div class="info-value" id="score">0</div>
-            </div>
-            <div class="info-item">
-                <div>Vidas</div>
-                <div class="info-value" id="lives">3</div>
-            </div>
-            <div class="info-item">
-                <div>Velocidade</div>
-                <div class="info-value" id="speed">1x</div>
+            <div class="stats">
+                <div class="stat">Pontos: <span id="score">0</span></div>
+                <div class="stat">Vidas: <span id="lives">3</span></div>
             </div>
         </div>
 
-        <div id="game-container">
-            <div class="game-over" id="game-over">
-                <h2>Fim de Jogo!</h2>
-                <p>Sua pontuação final: <span id="final-score">0</span></p>
-                <button id="restart-button">Jogar Novamente</button>
+        <div class="content-wrapper">
+            <div class="game-area">
+                <canvas id="gameCanvas" width="800" height="500"></canvas>
+
+                <div id="menuScreen" class="menu-screen">
+                    <h2 class="menu-title">Geometric Ninja</h2>
+                    <p class="menu-subtitle">Clique nas formas geométricas antes que toquem o chão!</p>
+                    <button class="btn" onclick="startGame()">🚀 Iniciar Jogo</button>
+                </div>
+
+                <div id="gameOverScreen" class="game-over-screen" style="display: none;">
+                    <h2 class="menu-title">Game Over!</h2>
+                    <p class="menu-subtitle">Pontuação Final: <span id="finalScore">0</span></p>
+                    <button class="btn" onclick="restartGame()">🎮 Jogar Novamente</button>
+                    <button class="btn btn-secondary" onclick="goToMenu()">🏠 Menu Principal</button>
+                </div>
+            </div>
+
+            <div class="rules-panel">
+                <div class="rules-title">
+                    🎮 Como Jogar
+                </div>
+                <ul class="rules-list">
+                    <li>Clique nas formas antes que toquem o chão</li>
+                    <li>Você tem 3 vidas</li>
+                    <li>Velocidade aumenta com os pontos</li>
+                </ul>
+
+                <div class="scoring-section">
+                    <div class="scoring-title">
+                        📊 Pontuação
+                    </div>
+                    <div class="score-item">
+                        <div class="shape-icon circle"></div>
+                        <span>Círculo: 10 pontos</span>
+                    </div>
+                    <div class="score-item">
+                        <div class="shape-icon square"></div>
+                        <span>Quadrado: 15 pontos</span>
+                    </div>
+                    <div class="score-item">
+                        <div class="shape-icon triangle"></div>
+                        <span>Triângulo: 20 pontos</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="controls">
-            <button id="start-button">Iniciar Jogo</button>
-            <button id="pause-button" disabled>Pausar</button>
-        </div>
-
-    </div>
-
-    <div class="rules-modal" id="rules-modal">
-        <div class="rules-content">
-            <h2>Regras do Jogo</h2>
-
-            <div class="rules-list">
-                <div class="rule-item">
-                    <div class="rule-icon">●</div>
-                    <div class="rule-text">Clique nas formas geométricas para ganhar pontos</div>
-                </div>
-
-                <div class="rule-item">
-                    <div class="rule-icon">●</div>
-                    <div class="rule-text">Cada forma que chegar ao chão reduz uma vida</div>
-                </div>
-
-                <div class="rule-item">
-                    <div class="rule-icon">●</div>
-                    <div class="rule-text">Você começa com 3 vidas</div>
-                </div>
-
-                <div class="rule-item">
-                    <div class="rule-icon">●</div>
-                    <div class="rule-text">O jogo termina quando suas vidas acabarem</div>
-                </div>
-
-                <div class="rule-item">
-                    <div class="rule-icon">●</div>
-                    <div class="rule-text">Quanto mais pontos você fizer, mais rápido as formas cairão</div>
-                </div>
-            </div>
-
-            <div class="shape-preview">
-                <div class="preview-item">
-                    <div class="preview-shape circle" style="background-color: #FF5252;">10</div>
-                    <div>Círculo</div>
-                </div>
-                <div class="preview-item">
-                    <div class="preview-shape" style="background-color: #448AFF;">10</div>
-                    <div>Quadrado</div>
-                </div>
-                <div class="preview-item">
-                    <div class="preview-shape triangle" style="background-color: #69F0AE;">10</div>
-                    <div>Triângulo</div>
-                </div>
-            </div>
-
-            <button id="close-rules">Entendi</button>
+        <div class="tip">
+            💡 Dica: Quanto mais pontos, mais rápido as formas caem!
         </div>
     </div>
 
