@@ -4,9 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Geometric Ninja - Modo Fácil</title>
-
+    <title>Geometric Ninja</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -30,17 +28,13 @@
                 <div id="menuScreen" class="menu-screen">
                     <h2 class="menu-title">Geometric Ninja</h2>
                     <p class="menu-subtitle">Clique nas formas geométricas antes que toquem o chão!</p>
-                    <button class="btn btn-easy" onclick="startGame('easy')">😊 Modo Fácil</button>
-                    <div class="difficulty-buttons">
-                        <button class="btn btn-normal" onclick="startGame('normal')">😐 Normal</button>
-                        <button class="btn btn-hard" onclick="startGame('hard')">😠 Difícil</button>
-                    </div>
+                    <button class="btn" onclick="startGame()">🎮 Iniciar Jogo</button>
                 </div>
 
                 <div id="gameOverScreen" class="game-over-screen" style="display: none;">
                     <h2 class="menu-title">Game Over!</h2>
                     <p class="menu-subtitle">Pontuação Final: <span id="finalScore">0</span></p>
-                    <button class="btn" onclick="restartGame()">🎮 Jogar Novamente</button>
+                    <button class="btn" onclick="restartGame()">🔄 Jogar Novamente</button>
                     <button class="btn btn-secondary" onclick="goToMenu()">🏠 Menu Principal</button>
                 </div>
             </div>
@@ -52,7 +46,7 @@
                 <ul class="rules-list">
                     <li>Clique nas formas antes que toquem o chão</li>
                     <li>Você começa com 5 vidas</li>
-                    <li>Velocidade aumenta gradualmente com os pontos</li>
+                    <li>A dificuldade aumenta devagar e gradualmente</li>
                     <li>Formas maiores são mais fáceis de clicar</li>
                 </ul>
 
@@ -77,11 +71,10 @@
         </div>
 
         <div class="tip">
-            💡 Dica: No modo fácil, as formas caem mais devagar e são maiores!
+            💡 Dica: Quanto mais pontos você faz, mais rápido o jogo fica!
         </div>
     </div>
 
     <script src="js/main.js"></script>
 </body>
-
 </html>

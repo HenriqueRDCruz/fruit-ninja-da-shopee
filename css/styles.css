@@ -241,14 +241,6 @@ canvas {
     background: #10b981;
 }
 
-.btn-normal {
-    background: #3b82f6;
-}
-
-.btn-hard {
-    background: #ef4444;
-}
-
 /* Layout responsivo */
 @media (max-width: 1100px) {
     .content-wrapper {
